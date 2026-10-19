@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SignTube Avatar Engine</title>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta http-equiv="Access-Control-Allow-Methods" content="GET">
+    <link rel="stylesheet" href="cwa/cwasa.css" />
+    <style>
+        html, body {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background: #0d1117;
+        }
+        .CWASAAvatar {
+            position: relative;
+            background: linear-gradient(180deg, #1a2a4a 0%, #0d1117 100%);
+            width: 100%; height: 100%;
+            margin: 0; border: 0; padding: 0;
+        }
+        .canvasAv {
+            position: absolute; left: 0; top: 0;
+            width: 100%; height: 100%;
+            margin: 0; border: 0; padding: 0;
+        }
+        .divAv {
+            box-sizing: border-box;
+            position: relative;
+            background: linear-gradient(180deg, #1a2a4a 0%, #0d1117 100%);
+            width: 100%; height: 100%;
+            margin: 0; border: 0; padding: 0;
+        }
+        /* Hide CWASA built-in UI */
+        .divCtrlPanel, .CWASAGUI, .CWASAAvMenu, .txtFPS,
+        .txtLogSpeed, .txtSF, .txtGloss, .statusLog,
+        .spanInfo, .stocApplet { display: none !important; }
+        #overlay {
+            position: absolute; bottom: 8px; left: 8px; right: 8px;
+            background: rgba(0,0,0,0.75);
+            color: #58a6ff; padding: 6px 12px;
+            border-radius: 8px; font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            z-index: 100; pointer-events: none;
+            display: flex; justify-content: space-between;
+        }
+        #overlay .sign-word { color: #7ee787; font-weight: bold; }
+        #overlay .queue-count { color: #8b949e; }
+    </style>
+    <script type="text/javascript" src="cwa/allcsa.js"></script>
+    <script type="text/javascript">
+        var isReady = false;
+        var animQueue = [];
+        var isPlaying = false;
+        var currentWord = "";
+        var BASE_URL = "";
+
+        // Speed settings
+        var SIGN_DURATION = 700;        // ms per known word sign
+        var LETTER_DURATION = 400;      // ms per fingerspelled letter
+        var MAX_QUEUE_SIZE = 30;        // if queue grows beyond this, skip old items
+
+        function initAvatar() {
+            // Set base URL to /avatar to resolve paths properly from Next.js root
+            BASE_URL = window.location.origin + "/avatar";
+            CWASA.init();
+            isReady = true;
+            updateOverlay("Ready", 0);
+            window.parent.postMessage({ type: "avatar-ready" }, "*");
+        }
+
+        function updateOverlay(word, queueLen) {
+            var w = document.getElementById("ov-word");
+            var q = document.getElementById("ov-queue");
+            if (w) w.textContent = word ? "▶ " + word : "Ready";
+            if (q) q.textContent = queueLen > 0 ? "Queue: " + queueLen : "";
+        }
+
+        function playSiGMLFile(sigmlPath) {
+            if (!isReady) return;
+            var fullURL = BASE_URL + "/" + sigmlPath;
+            try {
+                CWASA.playSiGMLURL(fullURL);
+            } catch(e) {
+                console.error("CWASA play error:", e);
+            }
+        }
+
+        function processQueue() {
+            if (animQueue.length === 0) {
+                isPlaying = false;
+                currentWord = "";
+                updateOverlay("", 0);
+                window.parent.postMessage({ type: "avatar-idle" }, "*");
+                return;
+            }
+
+            // If queue is too long, skip ahead to keep up with video
+            if (animQueue.length > MAX_QUEUE_SIZE) {
+                var skipCount = animQueue.length - 10; // keep last 10 items
+                animQueue.splice(0, skipCount);
+                window.parent.postMessage({
+                    type: "avatar-skipped",
+                    count: skipCount
+                }, "*");
+            }
+
+            isPlaying = true;
+            var item = animQueue.shift();
+            currentWord = item.word;
+
+            updateOverlay(item.word, animQueue.length);
+
+            window.parent.postMessage({
+                type: "avatar-playing",
+                word: item.word
+            }, "*");
+
+            playSiGMLFile(item.path);
+
+            // Use faster duration based on whether it's a full word or single letter
+            var duration = item.duration || SIGN_DURATION;
+            setTimeout(function() {
+                window.parent.postMessage({
+                    type: "avatar-word-done",
+                    word: item.word
+                }, "*");
+                processQueue();
+            }, duration);
+        }
+
+        function queueAnimation(path, word, duration) {
+            // Determine if this is a letter (fingerspelling) or full word
+            var dur = duration || (word.length === 1 ? LETTER_DURATION : SIGN_DURATION);
+            animQueue.push({ path: path, word: word, duration: dur });
+            updateOverlay(currentWord || "Queuing...", animQueue.length);
+            if (!isPlaying) {
+                processQueue();
+            }
+        }
+
+        function clearQueue() {
+            animQueue = [];
+            isPlaying = false;
+            currentWord = "";
+            updateOverlay("", 0);
+        }
+
+        function pauseQueue() {
+            isPlaying = false;
+            updateOverlay("Paused", animQueue.length);
+        }
+
+        function resumeQueue() {
+            if (animQueue.length > 0 && !isPlaying) {
+                processQueue();
+            }
+        }
+
+        // Set speed via message
+        function setSpeed(signDur, letterDur) {
+            if (signDur) SIGN_DURATION = signDur;
+            if (letterDur) LETTER_DURATION = letterDur;
+        }
+
+        window.addEventListener("message", function(event) {
+            var data = event.data;
+            if (!data || !data.type) return;
+
+            switch(data.type) {
+                case "play-sigml":
+                    queueAnimation(data.path, data.word, data.duration);
+                    break;
+                case "play-batch":
+                    if (data.items && Array.isArray(data.items)) {
+                        data.items.forEach(function(item) {
+                            queueAnimation(item.path, item.word, item.duration);
+                        });
+                    }
+                    break;
+                case "clear":
+                    clearQueue();
+                    break;
+                case "pause":
+                    pauseQueue();
+                    break;
+                case "resume":
+                    resumeQueue();
+                    break;
+                case "set-speed":
+                    setSpeed(data.signDuration, data.letterDuration);
+                    break;
+                case "ping":
+                    window.parent.postMessage({ type: "pong", ready: isReady }, "*");
+                    break;
+            }
+        });
+    </script>
+</head>
+
+<body onload="initAvatar();">
+    <div style="width: 100%; height: 100%; position: relative;">
+        <div class="CWASAAvatar av0" style="width: 100%; height: 100%;"></div>
+        <div id="overlay">
+            <span id="ov-word">Initializing...</span>
+            <span id="ov-queue" class="queue-count"></span>
+        </div>
+    </div>
+</body>
+</html>
