@@ -109,3 +109,15 @@ signtube-extension/avatar/shaders/
 signtube-extension/avatar/h2s.xsl
 signtube-extension/sigml/
 signtube-extension/icons/
+
+# AI / agent session artifacts and local logs
+summary.txt
+*-summary.txt
+nohup.out
+*.log
+train_log.txt
+
+# Local scratch
+scratch/
+tmp/
+.DS_Store
