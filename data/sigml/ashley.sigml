@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sigml>
+  <hns_sign gloss="ashley">
+    <hamnosys_nonmanual>
+      <hnm_mouthpicture picture="ashley"/>
+    </hamnosys_nonmanual>
+    <hamnosys_manual>
+      <hamfist/><hamthumboutmod/>
+      <hamextfingeruo/>
+      <hampalmu/>
+      <hamchest/>
+      <hammovei/>
+    </hamnosys_manual>
+  </hns_sign>
+</sigml>

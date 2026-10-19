@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sigml>
+  <hns_sign gloss="feday">
+    <hamnosys_nonmanual>
+      <hnm_mouthpicture picture="feday"/>
+    </hamnosys_nonmanual>
+    <hamnosys_manual>
+      <hamcee12/>
+      <hamextfingero/>
+      <hampalmr/>
+      <hamneck/>
+      <hammovel/>
+    </hamnosys_manual>
+  </hns_sign>
+</sigml>
