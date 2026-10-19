@@ -1,0 +1,17 @@
+# Exclude everything by default, then whitelist what's needed
+*
+
+# Whitelist only backend essentials
+!sign_server.py
+!label_utils.py
+!requirements.txt
+!Dockerfile
+!railway.toml
+!hand_landmarker.task
+
+# Whitelist model directory
+!model/
+!model/**
+
+# Allow .railwayignore itself
+!.railwayignore
