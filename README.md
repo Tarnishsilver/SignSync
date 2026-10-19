@@ -4,6 +4,9 @@ Real-time sign language translation with 3D avatar output. SignSync takes webcam
 input, classifies hand shapes and finger gestures with TensorFlow Lite models,
 and renders the result as animated sign language on a 3D avatar.
 
+<img width="1893" height="905" alt="image" src="https://github.com/user-attachments/assets/a57a3f1a-fd85-4bb3-9a16-691ca2683c6b" />
+
+
 The project is a monorepo containing four surfaces that share one sign lexicon
 and one avatar engine:
 
