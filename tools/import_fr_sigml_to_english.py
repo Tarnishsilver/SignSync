@@ -360,7 +360,9 @@ words_translations = {
 }
 
 # Directory containing the files to rename
-directory = r'C:\Users\LENOVO\Desktop\sigml'
+directory = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'sigml'
+)
  
 
 # Get the list of files in the directory

@@ -421,7 +421,7 @@ translations = {
 }
 
 # The remaining not explicitly matched items will just be mapped by taking the english letter replacements or skipping them
-filepath = r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\tools\import_fr_sigml_to_english.py'
+filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tools', 'import_fr_sigml_to_english.py')
 
 with open(filepath, 'r', encoding='utf-8') as f:
     code = f.read()

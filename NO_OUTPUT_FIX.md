@@ -18,9 +18,9 @@
 
 ## 3. **Run the app from the project folder**
 - **Symptom:** App crashes on start or "file not found" for .tflite.
-- **Fix:** Always run from the ASL project folder:
+- **Fix:** Always run from the repository root, so the relative `model/` and `hand_landmarker.task` paths resolve:
   ```bash
-  cd c:\Hackverse\ASL\hand-gesture-recognition-mediapipe
+  cd SignSync
   python app.py
   ```
 

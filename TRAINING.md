@@ -9,7 +9,7 @@ This guide covers collecting your own gestures and training both **keypoint** (s
 Use the interactive script to create the dataset by **entering words** and choosing **pose** or **gesture** capture (MediaPipe + same CSV format as the app):
 
 ```bash
-cd "c:\Hackverse\ASL\hand-gesture-recognition-mediapipe"
+cd SignSync
 python training.py
 ```
 
@@ -75,7 +75,7 @@ thank you
 Run the app from this folder:
 
 ```bash
-cd "c:\Hackverse\ASL\hand-gesture-recognition-mediapipe"
+cd SignSync
 python app.py
 ```
 
@@ -148,7 +148,6 @@ python train_point_history.py --epochs 1000
 ## 5. Use the new models
 
 - Run **app.py** again; it loads the `.tflite` models from the same `model/` paths.
-- Or run **Final Move** (`c:\Hackverse\final move\app.py`); it uses these models if `config.MODEL_BASE` points to this folder.
 
 ---
 

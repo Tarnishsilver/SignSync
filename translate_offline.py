@@ -411,9 +411,12 @@ translations = {
     "نحن": "we",
 }
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
+
 directories_to_update = [
-    r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\data',
-    r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\web-simulator'
+    os.path.join(PROJECT_ROOT, 'data'),
+    os.path.join(PROJECT_ROOT, 'web-simulator')
 ]
 
 json_path = os.path.join(directories_to_update[0], 'categories_files.json')
