@@ -100,3 +100,12 @@ node_modules/
 .next/
 out/
 *.tsbuildinfo
+
+# SignTube extension build artifacts
+# Regenerate with: python signtube-extension/build_extension.py
+signtube-extension/avatar/avatars/
+signtube-extension/avatar/cwa/
+signtube-extension/avatar/shaders/
+signtube-extension/avatar/h2s.xsl
+signtube-extension/sigml/
+signtube-extension/icons/

@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "SignTube – YouTube Sign Language Avatar",
+  "version": "1.0.0",
+  "description": "Real-time sign language avatar overlay for YouTube videos. Translates captions into 3D sign language animations right next to the video.",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://youtube.com/*"
+  ],
+  "icons": {
+    "16": "icons/icon16.svg",
+    "48": "icons/icon48.svg",
+    "128": "icons/icon128.svg"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.svg",
+      "48": "icons/icon48.svg"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/watch*",
+        "https://youtube.com/watch*"
+      ],
+      "js": ["content/content.js"],
+      "css": ["content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "sandbox": {
+    "pages": [
+      "avatar/index.html"
+    ]
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "avatar/*",
+        "avatar/avatar.js",
+        "avatar/cwa/*",
+        "avatar/avatars/*",
+        "avatar/shaders/*",
+        "sigml/*"
+      ],
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"]
+    }
+  ]
+}

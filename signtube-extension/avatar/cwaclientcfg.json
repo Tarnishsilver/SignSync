@@ -1,0 +1,13 @@
+{
+  "description"     : "========  CWASA client configuration data. SignTube Extension  ========",
+
+  "avSettings" : [
+    {
+      "width":            220,
+      "height":           190,
+      "avList":           "avsfull",
+      "initAv":           "marc",
+      "initSiGMLURL":     "hello.sigml"
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+/* ============================================
+   SignTube – YouTube Sign Language Avatar Overlay
+   ============================================ */
+
+/* Avatar container – positioned as a floating panel near the video */
+#signtube-avatar-container {
+  position: absolute;
+  z-index: 9999;
+  width: 220px;
+  height: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(88, 166, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(59, 130, 246, 0.08);
+  background: linear-gradient(145deg, #0d1117 0%, #161b22 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: grab;
+  user-select: none;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  border: 1px solid rgba(88, 166, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+#signtube-avatar-container:hover {
+  box-shadow:
+    0 0 0 1px rgba(88, 166, 255, 0.25),
+    0 12px 48px rgba(0, 0, 0, 0.7),
+    0 0 80px rgba(59, 130, 246, 0.12);
+  border-color: rgba(88, 166, 255, 0.25);
+}
+
+#signtube-avatar-container.signtube-dragging {
+  cursor: grabbing;
+  opacity: 0.92;
+  transform: scale(1.02);
+  transition: transform 0.1s ease;
+}
+
+#signtube-avatar-container.signtube-minimized {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+#signtube-avatar-container.signtube-minimized #signtube-avatar-iframe,
+#signtube-avatar-container.signtube-minimized #signtube-status-bar,
+#signtube-avatar-container.signtube-minimized #signtube-header-bar .signtube-header-title,
+#signtube-avatar-container.signtube-minimized #signtube-header-bar .signtube-header-controls {
+  display: none !important;
+}
+
+#signtube-avatar-container.signtube-minimized #signtube-header-bar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: linear-gradient(135deg, #1a73e8 0%, #7c3aed 100%);
+}
+
+#signtube-avatar-container.signtube-minimized #signtube-minimized-icon {
+  display: flex !important;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Header bar */
+#signtube-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: linear-gradient(90deg, rgba(26, 115, 232, 0.15) 0%, rgba(124, 58, 237, 0.1) 100%);
+  border-bottom: 1px solid rgba(88, 166, 255, 0.08);
+  cursor: grab;
+}
+
+#signtube-header-bar:active {
+  cursor: grabbing;
+}
+
+.signtube-header-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #c9d1d9;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.signtube-header-title .signtube-logo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a73e8, #7c3aed);
+  box-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+  animation: signtube-pulse 2s infinite;
+}
+
+@keyframes signtube-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(88, 166, 255, 0.6); }
+  50% { box-shadow: 0 0 16px rgba(88, 166, 255, 0.9); }
+}
+
+.signtube-header-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.signtube-header-controls button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #8b949e;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.signtube-header-controls button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #c9d1d9;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+#signtube-minimized-icon {
+  display: none !important;
+  color: white;
+}
+
+/* Avatar iframe */
+#signtube-avatar-iframe {
+  width: 100%;
+  height: 190px;
+  border: none;
+  display: block;
+  background: #0d1117;
+}
+
+/* Status bar */
+#signtube-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(88, 166, 255, 0.06);
+  min-height: 24px;
+}
+
+.signtube-current-word {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #7ee787;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.signtube-current-word .signtube-play-icon {
+  color: #7ee787;
+  font-size: 9px;
+  animation: signtube-blink 1s infinite;
+}
+
+@keyframes signtube-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.signtube-queue-info {
+  font-size: 9px;
+  color: #484f58;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.signtube-idle-text {
+  font-size: 10px;
+  color: #484f58;
+  font-style: italic;
+}
+
+/* Caption highlight on YouTube page */
+.signtube-caption-highlight {
+  background: rgba(126, 231, 135, 0.15) !important;
+  border-radius: 3px;
+  padding: 1px 3px;
+  transition: background 0.3s ease;
+}
+
+/* Resize handle */
+.signtube-resize-handle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+#signtube-avatar-container:hover .signtube-resize-handle {
+  opacity: 0.5;
+}
+
+.signtube-resize-handle::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid rgba(88, 166, 255, 0.4);
+  border-bottom: 2px solid rgba(88, 166, 255, 0.4);
+}
+
+/* Position presets indicator */
+.signtube-position-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.85);
+  color: #58a6ff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10000;
+  white-space: nowrap;
+}
+
+.signtube-position-indicator.signtube-visible {
+  opacity: 1;
+}

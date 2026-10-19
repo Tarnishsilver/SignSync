@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SignTube</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <div class="logo-section">
+        <div class="logo-icon">🤟</div>
+        <div class="logo-text">
+          <h1>SignTube</h1>
+          <span class="tagline">YouTube → Sign Language</span>
+        </div>
+      </div>
+      <div id="status-badge" class="status-badge status-inactive">
+        <span class="status-dot"></span>
+        <span id="status-text">Inactive</span>
+      </div>
+    </div>
+
+    <!-- Main Toggle -->
+    <div class="toggle-section">
+      <button id="btn-toggle" class="btn-primary">
+        <span class="btn-icon">▶</span>
+        <span id="btn-toggle-text">Enable Avatar</span>
+      </button>
+    </div>
+
+    <!-- Settings -->
+    <div class="settings-section">
+      <h2 class="section-title">⚙️ Settings</h2>
+
+      <!-- Position -->
+      <div class="setting-row">
+        <label>Avatar Position</label>
+        <select id="sel-position">
+          <option value="bottom-right">↘ Bottom Right</option>
+          <option value="bottom-left">↙ Bottom Left</option>
+          <option value="top-right">↗ Top Right</option>
+          <option value="top-left">↖ Top Left</option>
+        </select>
+      </div>
+
+      <!-- Speed -->
+      <div class="setting-row">
+        <label>Sign Speed</label>
+        <div class="speed-control">
+          <input type="range" id="range-speed" min="300" max="1200" value="700" step="50">
+          <span id="speed-label" class="range-label">700ms</span>
+        </div>
+      </div>
+
+      <!-- Fingerspelling -->
+      <div class="setting-row">
+        <label>Fingerspelling</label>
+        <div class="toggle-switch">
+          <input type="checkbox" id="chk-fingerspell" checked>
+          <label for="chk-fingerspell" class="switch"></label>
+          <span class="toggle-description">Spell unknown words</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="info-section">
+      <div class="info-row">
+        <span class="info-label">Current Sign</span>
+        <span id="info-word" class="info-value">—</span>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      <p>💡 <strong>Tip:</strong> Open any YouTube video with captions enabled. The avatar will appear next to the video and sign along in real-time!</p>
+      <p>🖱️ <strong>Drag</strong> the avatar panel to reposition it anywhere on screen.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <span>SignTube v1.0</span>
+      <span class="separator">·</span>
+      <span>Made with ❤️ for accessibility</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
