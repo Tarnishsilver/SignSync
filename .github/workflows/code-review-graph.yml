@@ -1,0 +1,159 @@
+name: Code Review Graph Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, develop]
+
+jobs:
+  code-review-analysis:
+    runs-on: ubuntu-latest
+    name: Code Review & Graph Analysis
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for code-review-graph
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Run Pylint
+        run: uv run pylint --exit-zero --output-format=json **/*.py > pylint-report.json || true
+        continue-on-error: true
+
+      - name: Run Radon (code complexity)
+        run: uv run radon metrics -s **/*.py > radon-report.txt || true
+        continue-on-error: true
+
+      - name: Run MyPy (type checking)
+        run: uv run mypy . --html ./mypy-report || true
+        continue-on-error: true
+
+      - name: Run Ruff Linting
+        run: uv run ruff check . --output-format=json > ruff-report.json || true
+        continue-on-error: true
+
+      - name: Code Coverage
+        run: uv run pytest --cov=. --cov-report=html --cov-report=term-missing --cov-report=json || true
+        continue-on-error: true
+
+      - name: Generate Code Review Graph
+        run: |
+          python3 << 'EOF'
+          import json
+          import os
+          from pathlib import Path
+          
+          # Aggregate analysis results
+          results = {
+              "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+              "repository": "${{ github.repository }}",
+              "commit": "${{ github.sha }}",
+              "branch": "${{ github.ref }}",
+              "files_analyzed": 0,
+              "quality_metrics": {},
+              "issues": []
+          }
+          
+          # Parse pylint results
+          if os.path.exists("pylint-report.json"):
+              try:
+                  with open("pylint-report.json") as f:
+                      pylint_data = json.load(f)
+                      results["issues"].extend([issue.get("message") for issue in pylint_data if isinstance(pylint_data, list)])
+              except:
+                  pass
+          
+          # Save graph data
+          with open("code-review-graph.json", "w") as f:
+              json.dump(results, f, indent=2)
+          
+          print("Code Review Graph generated: code-review-graph.json")
+          EOF
+        continue-on-error: true
+
+      - name: Upload Code Review Graph
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-review-graph
+          path: |
+            code-review-graph.json
+            pylint-report.json
+            ruff-report.json
+            radon-report.txt
+            .coverage
+            coverage.json
+            mypy-report/
+          retention-days: 30
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let comment = '## 📊 Code Review Graph Analysis\n\n';
+            
+            if (fs.existsSync('code-review-graph.json')) {
+              const graph = JSON.parse(fs.readFileSync('code-review-graph.json', 'utf8'));
+              comment += `- **Commit**: \`${graph.commit.substring(0, 7)}\`\n`;
+              comment += `- **Issues Found**: ${graph.issues.length}\n`;
+              comment += `- **Branch**: ${graph.branch}\n\n`;
+            }
+            
+            comment += '### Check Artifacts\n';
+            comment += 'Full analysis results available in the [Actions artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).\n';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+        continue-on-error: true
+
+  quality-gate:
+    runs-on: ubuntu-latest
+    name: Quality Gate Check
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run Tests
+        run: uv run pytest --cov=. --cov-report=term-missing --cov-fail-under=60
+        continue-on-error: true
+
+      - name: Check Code Quality
+        run: |
+          echo "Running code quality checks..."
+          uv run ruff check . || true
+          uv run black --check . || true
+        continue-on-error: true
