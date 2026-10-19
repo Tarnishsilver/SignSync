@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sigml>
+  <hns_sign gloss="maybe">
+    <hamnosys_nonmanual>
+      <hnm_mouthpicture picture="maybe"/>
+    </hamnosys_nonmanual>
+    <hamnosys_manual>
+      <hamcee12/>
+      <hamextfingerl/>
+      <hampalmd/>
+      <hamshoulders/>
+      <hammoved/>
+    </hamnosys_manual>
+  </hns_sign>
+</sigml>
