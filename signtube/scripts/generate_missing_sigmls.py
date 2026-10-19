@@ -1,12 +1,9 @@
 import os
 import shutil
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-
-input_file = os.path.join(PROJECT_ROOT, 'data', 'missing_words.txt')
-data_sigml_dir = os.path.join(PROJECT_ROOT, 'data', 'sigml')
-public_sigml_dir = os.path.join(PROJECT_ROOT, 'signtube', 'public', 'avatar', 'sigml')
+input_file = r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\data\missing_words.txt'
+data_sigml_dir = r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\data\sigml'
+public_sigml_dir = r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\signtube\public\avatar\sigml'
 
 # Ensure directories exist
 os.makedirs(data_sigml_dir, exist_ok=True)

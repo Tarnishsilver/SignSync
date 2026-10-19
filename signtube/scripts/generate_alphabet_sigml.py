@@ -60,11 +60,8 @@ asl_digits = {
 }
 
 # Output directories
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
-
-data_dir = os.path.join(PROJECT_ROOT, 'data', 'sigml')
-public_dir = os.path.join(PROJECT_ROOT, 'signtube', 'public', 'avatar', 'sigml')
+data_dir = r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\data\sigml'
+public_dir = r'c:\Users\Archana\OneDrive\Desktop\algerianSignLanguage-avatar\signtube\public\avatar\sigml'
 
 count = 0
 
